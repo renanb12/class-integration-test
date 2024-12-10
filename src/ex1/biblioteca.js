@@ -47,17 +47,21 @@ app.delete('/books/:id', (req, res) => {
 
 app.post('/loans', (req, res) => {
     const { id } = req.body;
-    const book = books.find(book => book.id === id);
+    const book = books.find(b => b.id === id);
+
     if (!book) {
         return res.status(404).json({ message: 'Livro não encontrado.' });
     }
+
     if (!book.available) {
         return res.status(400).json({ message: 'Livro indisponível.' });
     }
+
     book.available = false;
-    loans.push({ id, date: new Date() });
-    res.json({ message: 'Empréstimo realizado com sucesso.' });
+    loans.push({ id: book.id, date: new Date() });
+    res.status(200).json({ message: 'Empréstimo realizado com sucesso.' });
 });
+
 
 app.post('/returns', (req, res) => {
     const { id } = req.body;

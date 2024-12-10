@@ -101,4 +101,30 @@ describe('API de Biblioteca', () => {
         expect(response.body).toEqual({ message: 'Devolução realizada com sucesso.' });
         expect(books[0].available).toBe(true);
     });
+
+    it('deve retornar erro ao tentar emprestar um livro indisponível', async () => {
+        books.push({ id: '1', title: 'Livro Indisponível', author: 'Autor Exemplo', available: false });
+    
+        const response = await request(app)
+            .post('/loans')
+            .send({ id: '1' })
+            .expect(400)
+            .expect('Content-Type', /json/);
+    
+        expect(response.body).toEqual({ message: 'Livro indisponível.' });
+        expect(books[0].available).toBe(false);
+        expect(loans).toHaveLength(0);
+    });
+    
+    
+    it('deve retornar erro ao tentar emprestar um livro inexistente', async () => {
+        const response = await request(app)
+            .post('/loans')
+            .send({ id: '999' }) // ID de livro que não existe
+            .expect(404)
+            .expect('Content-Type', /json/);
+    
+        expect(response.body).toEqual({ message: 'Livro não encontrado.' });
+        expect(loans).toHaveLength(0);
+    });    
 });
