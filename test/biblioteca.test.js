@@ -120,7 +120,7 @@ describe('API de Biblioteca', () => {
     it('deve retornar erro ao tentar emprestar um livro inexistente', async () => {
         const response = await request(app)
             .post('/loans')
-            .send({ id: '999' }) // ID de livro que não existe
+            .send({ id: '999' })
             .expect(404)
             .expect('Content-Type', /json/);
     
